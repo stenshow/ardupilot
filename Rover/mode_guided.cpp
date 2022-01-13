@@ -3,6 +3,8 @@
 
 bool ModeGuided::_enter()
 {
+
+
     // set desired location to reasonable stopping point
     if (!g2.wp_nav.set_desired_location_to_stopping_location()) {
         return false;
@@ -19,6 +21,11 @@ bool ModeGuided::_enter()
 
 void ModeGuided::update()
 {
+
+    // AP::logger().Write_MessageF("Mode Guided enter!!");
+    // gcs().send_text(MAV_SEVERITY_DEBUG, "Test...");
+    // printf("test");
+    
     switch (_guided_mode) {
         case Guided_WP:
         {

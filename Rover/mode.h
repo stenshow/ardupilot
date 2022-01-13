@@ -30,7 +30,8 @@ public:
         RTL          = 11,
         SMART_RTL    = 12,
         GUIDED       = 15,
-        INITIALISING = 16
+        INITIALISING = 16,
+        GROVER       = 99
     };
 
     // Constructor
@@ -707,4 +708,21 @@ private:
     float _initial_heading_cd;  // vehicle heading (in centi-degrees) at moment vehicle was armed
     float _desired_heading_cd;  // latest desired heading (in centi-degrees) from pilot
 };
+
+class ModeGrover : public Mode
+{
+public:
+    uint32_t mode_number() const override { return GROVER; }
+    const char *name4() const override { return "GROV"; }
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+    // attributes for mavlink system status reporting
+    bool has_manual_input() const override { return true; }
+    // acro mode requires a velocity estimate for non skid-steer rovers
+    bool requires_position() const override { return false; }
+    bool requires_velocity() const override;
+    // sailboats in acro mode support user manually initiating tacking from transmitter
+    void handle_tack_request() override;
+};
+
 
