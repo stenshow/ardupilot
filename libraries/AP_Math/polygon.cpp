@@ -184,15 +184,36 @@ float Polygon_closest_distance_line(const Vector2f *V, unsigned N, const Vector2
         return -sqrtf(sq(intersection.x - p2.x) + sq(intersection.y - p2.y));
     }
     float closest_sq = FLT_MAX;
-    for (uint8_t i=0; i<N-1; i++) {
-        const Vector2f &v1 = V[i];
-        const Vector2f &v2 = V[i+1];
+    // for (uint8_t i=0; i<N-1; i++) {
+    //     const Vector2f &v1 = V[i];
+    //     const Vector2f &v2 = V[i+1];
+
+    //     float dist_sq = Vector2f::closest_distance_between_lines_squared(v1, v2, p1, p2);
+    //     if (dist_sq < closest_sq) {
+    //         closest_sq = dist_sq;
+    //     }
+    // }
+
+    // add for GRover
+    for (uint8_t i=0; i<N; i++) {
+        Vector2f v1;
+        Vector2f v2;
+
+        if (i<N-1){
+            v1 = V[i];
+            v2 = V[i+1];
+        }
+        else {
+            v1 = V[i];
+            v2 = V[0];
+        }
 
         float dist_sq = Vector2f::closest_distance_between_lines_squared(v1, v2, p1, p2);
         if (dist_sq < closest_sq) {
             closest_sq = dist_sq;
         }
     }
+
     return sqrtf(closest_sq);
 }
 

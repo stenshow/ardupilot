@@ -373,7 +373,7 @@ Therefore, this method attempts to avoid changing direction of the vehicle by mo
 unless the new margin is atleast _bendy_ratio times better than the margin with previously calculated bearing.
 We return true if we have resisted the change and will follow the last calculated bearing. 
 */
-bool AP_OABendyRuler::resist_bearing_change(const Location &destination, const Location &current_loc, bool active, float bearing_test, float lookahead_step1_dist, float margin, Location &prev_dest, float &prev_bearing, float &final_bearing, float &final_margin, bool proximity_only) const
+bool AP_OABendyRuler::resist_bearing_change(const Location &destination, const Location &current_loc, bool active, float bearing_test, float lookahead_step1_dist, float margin, Location &prev_dest, float &prev_bearing, float &final_bearing, float &final_margin, bool proximity_only)
 {      
     bool resisted_change = false;
     // see if there was a change in destination, if so, do not resist changing bearing 
@@ -412,7 +412,7 @@ bool AP_OABendyRuler::resist_bearing_change(const Location &destination, const L
 }
 
 // calculate minimum distance between a segment and any obstacle
-float AP_OABendyRuler::calc_avoidance_margin(const Location &start, const Location &end, bool proximity_only) const
+float AP_OABendyRuler::calc_avoidance_margin(const Location &start, const Location &end, bool proximity_only)
 {
     float margin_min = FLT_MAX;
 
@@ -442,10 +442,14 @@ float AP_OABendyRuler::calc_avoidance_margin(const Location &start, const Locati
 
     if (calc_margin_from_inclusion_and_exclusion_polygons(start, end, latest_margin)) {
         margin_min = MIN(margin_min, latest_margin);
+
+        _polygon_min_dist = latest_margin;
     }
 
     if (calc_margin_from_inclusion_and_exclusion_circles(start, end, latest_margin)) {
         margin_min = MIN(margin_min, latest_margin);
+
+        _circle_min_dist = latest_margin;
     }
 
     // return smallest margin from any obstacle

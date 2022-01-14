@@ -43,10 +43,10 @@ private:
     bool search_vertical_path(const Location &current_loc, const Location &destination, Location &destination_new, float lookahead_step1_dist, float lookahead_step2_dist, float bearing_to_dest, float distance_to_dest, bool proximity_only);
 
     // calculate minimum distance between a path and any obstacle
-    float calc_avoidance_margin(const Location &start, const Location &end, bool proximity_only) const;
+    float calc_avoidance_margin(const Location &start, const Location &end, bool proximity_only);
 
     // determine if BendyRuler should accept the new bearing or try and resist it. Returns true if bearing is not changed  
-    bool resist_bearing_change(const Location &destination, const Location &current_loc, bool active, float bearing_test, float lookahead_step1_dist, float margin, Location &prev_dest, float &prev_bearing, float &final_bearing, float &final_margin, bool proximity_only) const;    
+    bool resist_bearing_change(const Location &destination, const Location &current_loc, bool active, float bearing_test, float lookahead_step1_dist, float margin, Location &prev_dest, float &prev_bearing, float &final_bearing, float &final_margin, bool proximity_only);    
 
     // calculate minimum distance between a path and the circular fence (centered on home)
     // on success returns true and updates margin
@@ -84,4 +84,8 @@ private:
     float _current_lookahead;       // distance (in meters) ahead of the vehicle we are looking for obstacles
     float _bearing_prev;            // stored bearing in degrees 
     Location _destination_prev;     // previous destination, to check if there has been a change in destination
+
+    // add for GRover
+    float _polygon_min_dist;
+    float _circle_min_dist;
 };
