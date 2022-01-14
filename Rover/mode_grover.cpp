@@ -133,83 +133,171 @@ void ModeGrover::update()
     //float turn_rate = -4500.0;
     //float lat_accel = 1000.0;
 
+
     /// グルグル
     static int count = 0; // 配列を切り替える
     static int k = 0; // 周回範囲を切り替える
     int turn_num = 1; // from current loc to target loc
-
-    
-    if(count == 0 && k < lap_num - 1) {
+    if(count == 0 && k < lap_num) {
         d_north = 0.01*ax[k] - x_cur;
         d_east = 0.01*ay[k] - y_cur;
         deg = degrees( atan2f( d_east, d_north ));
         distance = sqrtf((d_north*d_north) + (d_east*d_east));
         heading = deg*100.0;  /// *100.0
         calc_steering_to_heading(heading);
-        calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
-        //calc_steering_from_lateral_acceleration(lat_accel, true);
-        //calc_steering_from_turn_rate(turn_rate);
+        calc_throttle(calc_speed_nudge(1.0, is_negative(0.5)), true);
         if(distance < turn_num) count++;
-    } else if(count == 1 && k < lap_num - 1) {
+        }
+    else if(count == 1 && k < lap_num) {
         d_north = 0.01*bx[k] - x_cur;
         d_east = 0.01*by[k] - y_cur;
         deg = degrees( atan2f( d_east, d_north ));
         distance = sqrtf((d_north*d_north) + (d_east*d_east));
         heading = deg*100.0;
         calc_steering_to_heading(heading);
-        calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+        calc_throttle(calc_speed_nudge(1.0, is_negative(0.5)), true);
         if(distance < turn_num) count++;
-    } else if(count == 2 && k < lap_num - 1) {
+    }
+    else if(count == 2 && k < lap_num) {
         d_north = 0.01*cx[k] - x_cur;
         d_east = 0.01*cy[k] - y_cur;
         deg = degrees( atan2f( d_east, d_north ));
         distance = sqrtf((d_north*d_north) + (d_east*d_east));
         heading = deg*100.0;
         calc_steering_to_heading(heading);
-        calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+        calc_throttle(calc_speed_nudge(1.0, is_negative(0.5)), true);
         if(distance < turn_num) count++;
-    } else if(count == 3 && k < lap_num - 1) {
+    }
+    else if(count == 3 && k < lap_num) {
         d_north = 0.01*dx[k] - x_cur;
         d_east = 0.01*dy[k] - y_cur;
         deg = degrees( atan2f( d_east, d_north ));
         distance = sqrtf((d_north*d_north) + (d_east*d_east));
         heading = deg*100.0;
         calc_steering_to_heading(heading);
-        calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+        calc_throttle(calc_speed_nudge(1.0, is_negative(0.5)), true);
         if(distance < turn_num) count++;
-    } else if(count == 4 && k < lap_num - 1) {
+    }
+    else if(count == 4 && k < lap_num) {
         d_north = 0.01*ax[k] - x_cur;
         d_east = 0.01*ay[k] - y_cur;
         deg = degrees( atan2f( d_east, d_north ));
         distance = sqrtf((d_north*d_north) + (d_east*d_east));
         heading = deg*100.0;
         calc_steering_to_heading(heading);
-        calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+        calc_throttle(calc_speed_nudge(1.0, is_negative(0.5)), true);
         if(distance < turn_num) {
             count = 0;
             k++;
         }
     }
-
-    if(k == lap_num - 1) {
+    if(k == lap_num && count == 0) {
+        gcs().send_text(MAV_SEVERITY_CRITICAL,"center!!");
         d_north = gc_x - x_cur;
         d_east = gc_y - y_cur;
         deg = degrees( atan2f( d_east, d_north ));
         distance = sqrtf((d_north*d_north) + (d_east*d_east));
         heading = deg*100.0;
-        // 制御する部分
         calc_steering_to_heading(heading);
-        calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
-        if(distance < turn_num) {
-            d_north = 0.01*ax[0] - x_cur;
-            d_east = 0.01*ay[0] - y_cur;
-            deg = degrees( atan2f( d_east, d_north ));
-            distance = sqrtf((d_north*d_north) + (d_east*d_east));
-            heading = deg*100.0;
-            calc_steering_to_heading(heading);
-            calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
-        }
+        calc_throttle(calc_speed_nudge(0.1, is_negative(0.5)), true);
+        if(distance < turn_num) count++;
     }
+    else if(k == lap_num && count == 1) {
+        gcs().send_text(MAV_SEVERITY_CRITICAL,"goal");
+        d_north = 0.01*ax[0] - x_cur;
+        d_east = 0.01*ay[0] - y_cur;
+        deg = degrees( atan2f( d_east, d_north ));
+        distance = sqrtf((d_north*d_north) + (d_east*d_east));
+        heading = deg*100.0;
+        calc_steering_to_heading(heading);
+        calc_throttle(calc_speed_nudge(0.1, is_negative(0.5)), true);
+        if(distance < turn_num) count++;
+    }
+    else if(k == lap_num && count == 2) {
+        heading = 0.0;
+        calc_steering_to_heading(heading);
+        calc_throttle(calc_speed_nudge(0.0, is_negative(0.0)), true);
+        gcs().send_text(MAV_SEVERITY_CRITICAL,"finish!!!");
+    }
+
+
+    // /// グルグル
+    // static int count = 0; // 配列を切り替える
+    // static int k = 0; // 周回範囲を切り替える
+    // int turn_num = 1; // from current loc to target loc
+
+    
+    // if(count == 0 && k < lap_num - 1) {
+    //     d_north = 0.01*ax[k] - x_cur;
+    //     d_east = 0.01*ay[k] - y_cur;
+    //     deg = degrees( atan2f( d_east, d_north ));
+    //     distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //     heading = deg*100.0;  /// *100.0
+    //     calc_steering_to_heading(heading);
+    //     calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     //calc_steering_from_lateral_acceleration(lat_accel, true);
+    //     //calc_steering_from_turn_rate(turn_rate);
+    //     if(distance < turn_num) count++;
+    // } else if(count == 1 && k < lap_num - 1) {
+    //     d_north = 0.01*bx[k] - x_cur;
+    //     d_east = 0.01*by[k] - y_cur;
+    //     deg = degrees( atan2f( d_east, d_north ));
+    //     distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //     heading = deg*100.0;
+    //     calc_steering_to_heading(heading);
+    //     calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     if(distance < turn_num) count++;
+    // } else if(count == 2 && k < lap_num - 1) {
+    //     d_north = 0.01*cx[k] - x_cur;
+    //     d_east = 0.01*cy[k] - y_cur;
+    //     deg = degrees( atan2f( d_east, d_north ));
+    //     distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //     heading = deg*100.0;
+    //     calc_steering_to_heading(heading);
+    //     calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     if(distance < turn_num) count++;
+    // } else if(count == 3 && k < lap_num - 1) {
+    //     d_north = 0.01*dx[k] - x_cur;
+    //     d_east = 0.01*dy[k] - y_cur;
+    //     deg = degrees( atan2f( d_east, d_north ));
+    //     distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //     heading = deg*100.0;
+    //     calc_steering_to_heading(heading);
+    //     calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     if(distance < turn_num) count++;
+    // } else if(count == 4 && k < lap_num - 1) {
+    //     d_north = 0.01*ax[k] - x_cur;
+    //     d_east = 0.01*ay[k] - y_cur;
+    //     deg = degrees( atan2f( d_east, d_north ));
+    //     distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //     heading = deg*100.0;
+    //     calc_steering_to_heading(heading);
+    //     calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     if(distance < turn_num) {
+    //         count = 0;
+    //         k++;
+    //     }
+    // }
+
+    // if(k == lap_num - 1) {
+    //     d_north = gc_x - x_cur;
+    //     d_east = gc_y - y_cur;
+    //     deg = degrees( atan2f( d_east, d_north ));
+    //     distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //     heading = deg*100.0;
+    //     // 制御する部分
+    //     calc_steering_to_heading(heading);
+    //     calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     if(distance < turn_num) {
+    //         d_north = 0.01*ax[0] - x_cur;
+    //         d_east = 0.01*ay[0] - y_cur;
+    //         deg = degrees( atan2f( d_east, d_north ));
+    //         distance = sqrtf((d_north*d_north) + (d_east*d_east));
+    //         heading = deg*100.0;
+    //         calc_steering_to_heading(heading);
+    //         calc_throttle(calc_speed_nudge(0.5, is_negative(0.5)), true);
+    //     }
+    // }
 
 }
 
